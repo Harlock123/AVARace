@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AVARace.ViewModels"
+        xmlns:views="using:AVARace.Views"
+        x:Class="AVARace.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="AVARace - Omega Race Clone"
+        Width="1024" Height="768"
+        MinWidth="800" MinHeight="600"
+        Background="Black"
+        WindowState="Normal"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <views:GameCanvas x:Name="GameCanvas"
+                          GameEngine="{Binding GameEngine}"
+                          Renderer="{Binding Renderer}" />
+
+        <TextBlock Text="{Binding StatusMessage}"
+                   IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                   Foreground="#00FF00"
+                   FontSize="24"
+                   FontFamily="Courier New"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+    </Grid>
+</Window>
