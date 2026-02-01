@@ -10,9 +10,14 @@ public class PlayerShip : Entity
     private const double Friction = 0.98;
     private const double ShipSize = 15.0;
     private const double FireCooldown = 0.2;
+    private const double InvulnerabilityDuration = 2.0;
 
     private double _fireCooldownTimer;
+    private double _invulnerabilityTimer;
+
     public bool CanFire => _fireCooldownTimer <= 0;
+    public bool IsInvulnerable => _invulnerabilityTimer > 0;
+    public double InvulnerabilityProgress => _invulnerabilityTimer / InvulnerabilityDuration;
 
     public PlayerShip(Vector2 position) : base(position)
     {
@@ -59,6 +64,16 @@ public class PlayerShip : Entity
         {
             _fireCooldownTimer -= deltaTime;
         }
+
+        if (_invulnerabilityTimer > 0)
+        {
+            _invulnerabilityTimer -= deltaTime;
+        }
+    }
+
+    public void MakeInvulnerable()
+    {
+        _invulnerabilityTimer = InvulnerabilityDuration;
     }
 
     public Bullet? Fire()

@@ -5,46 +5,26 @@ namespace AVARace.Game.Input;
 
 public class InputHandler : IInputHandler
 {
-    private readonly IControllerService _controller;
     private readonly HashSet<Key> _pressedKeys = new();
 
     public bool IsRotatingLeft =>
         _pressedKeys.Contains(Key.Left) ||
-        _pressedKeys.Contains(Key.A) ||
-        _controller.LeftStickX < -0.3f ||
-        _controller.IsDPadLeft;
+        _pressedKeys.Contains(Key.A);
 
     public bool IsRotatingRight =>
         _pressedKeys.Contains(Key.Right) ||
-        _pressedKeys.Contains(Key.D) ||
-        _controller.LeftStickX > 0.3f ||
-        _controller.IsDPadRight;
+        _pressedKeys.Contains(Key.D);
 
     public bool IsThrusting =>
         _pressedKeys.Contains(Key.Up) ||
-        _pressedKeys.Contains(Key.W) ||
-        _controller.IsButtonAPressed ||
-        _controller.RightTrigger > 0.3f ||
-        _controller.IsDPadUp;
+        _pressedKeys.Contains(Key.W);
 
     public bool IsFiring =>
-        _pressedKeys.Contains(Key.Space) ||
-        _controller.IsButtonXPressed ||
-        _controller.IsButtonBPressed ||
-        _controller.LeftTrigger > 0.3f;
+        _pressedKeys.Contains(Key.Space);
 
     public event Action? OnPausePressed;
     public event Action? OnRestartPressed;
     public event Action? OnExitPressed;
-
-    public InputHandler(IControllerService controller)
-    {
-        _controller = controller;
-        _controller.Initialize();
-
-        _controller.OnStartPressed += () => OnPausePressed?.Invoke();
-        _controller.OnBackPressed += () => OnRestartPressed?.Invoke();
-    }
 
     public void HandleKeyDown(Key key)
     {
@@ -72,10 +52,5 @@ public class InputHandler : IInputHandler
     public void Reset()
     {
         _pressedKeys.Clear();
-    }
-
-    public void UpdateController()
-    {
-        _controller.Update();
     }
 }

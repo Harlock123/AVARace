@@ -11,6 +11,7 @@ public class GameEngine : IGameEngine
     private readonly List<Entity> _entities = new();
     private readonly List<Bullet> _bullets = new();
     private readonly List<Enemy> _enemies = new();
+    private readonly List<Explosion> _explosions = new();
     private readonly Random _random = new();
 
     private PlayerShip? _player;
@@ -72,6 +73,7 @@ public class GameEngine : IGameEngine
         _entities.Clear();
         _bullets.Clear();
         _enemies.Clear();
+        _explosions.Clear();
         _player = null;
         _isRespawning = false;
         _respawnTimer = 0;
@@ -81,8 +83,6 @@ public class GameEngine : IGameEngine
 
     public void Update(double deltaTime)
     {
-        _inputHandler.UpdateController();
-
         if (!State.IsRunning || State.IsPaused || State.IsGameOver) return;
 
         HandleRespawn(deltaTime);
@@ -174,26 +174,37 @@ public class GameEngine : IGameEngine
                     enemy.IsAlive = false;
                     State.AddScore(enemy.PointValue);
                     _soundService.PlayExplosion();
+                    SpawnExplosion(enemy.Position);
                 }
             }
         }
 
-        if (_player != null && _player.IsAlive)
+        if (_player != null && _player.IsAlive && !_player.IsInvulnerable)
         {
             foreach (var enemy in _enemies.Where(e => e.IsAlive))
             {
                 if (CollisionDetection.CheckCollision(_player, enemy))
                 {
+                    var playerPos = _player.Position;
                     _player.IsAlive = false;
                     enemy.IsAlive = false;
                     _soundService.PlayExplosion();
                     _soundService.PlayThruster(false);
                     _wasThrusting = false;
+                    SpawnExplosion(playerPos, 16, 200); // Bigger explosion for player
+                    SpawnExplosion(enemy.Position);
                     PlayerDied();
                     break;
                 }
             }
         }
+    }
+
+    private void SpawnExplosion(Vector2 position, int particleCount = 12, double speed = 150)
+    {
+        var explosion = new Explosion(position, particleCount, speed);
+        _explosions.Add(explosion);
+        _entities.Add(explosion);
     }
 
     private void PlayerDied()
@@ -216,6 +227,7 @@ public class GameEngine : IGameEngine
         _entities.RemoveAll(e => !e.IsAlive);
         _bullets.RemoveAll(b => !b.IsAlive);
         _enemies.RemoveAll(e => !e.IsAlive);
+        _explosions.RemoveAll(e => !e.IsAlive);
     }
 
     private void CheckWaveComplete()
@@ -231,6 +243,7 @@ public class GameEngine : IGameEngine
     {
         var startPos = _arena.GetPlayerStartPosition();
         _player = new PlayerShip(startPos);
+        _player.MakeInvulnerable();
         _entities.Add(_player);
     }
 
@@ -239,6 +252,9 @@ public class GameEngine : IGameEngine
         var enemyCount = 2 + State.Wave;
         var hasHunter = State.Wave >= 3;
         var hasFastDroids = State.Wave >= 2;
+
+        // Get player position to avoid spawning enemies too close
+        var playerPos = _player?.Position;
 
         for (int i = 0; i < enemyCount; i++)
         {
@@ -256,7 +272,7 @@ public class GameEngine : IGameEngine
                 type = EnemyType.Droid;
             }
 
-            var pos = _arena.GetRandomSpawnPosition(_random);
+            var pos = _arena.GetRandomSpawnPosition(_random, playerPos, 150);
             var enemy = new Enemy(pos, type);
             _enemies.Add(enemy);
             _entities.Add(enemy);

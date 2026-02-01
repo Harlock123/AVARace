@@ -10,8 +10,15 @@ Omega Race was a unique arcade game featuring vector graphics where players pilo
 - Authentic physics with wall bouncing
 - Progressive difficulty with waves of enemies
 - Retro synthesized sound effects
-- Gamepad/controller support
 - Full MVVM architecture
+
+## Screenshots
+
+![Start Screen](Images/SCREENSHOT1.png)
+
+![Gameplay](Images/SCREENSHOT2.png)
+
+![Explosion Effects](Images/SCREENSHOT3.png)
 
 ## Requirements
 
@@ -30,8 +37,6 @@ dotnet run --project src/AVARace
 
 ## Controls
 
-### Keyboard
-
 | Key | Action |
 |-----|--------|
 | **Left Arrow** / **A** | Rotate left |
@@ -40,29 +45,8 @@ dotnet run --project src/AVARace
 | **Space** | Fire |
 | **P** | Pause |
 | **R** | Restart (when game over) |
+| **Ctrl+S** | Save screenshot |
 | **Escape** | Exit |
-
-### Controller / Gamepad
-
-Controllers are automatically detected and supported via SDL2.
-
-| Control | Action |
-|---------|--------|
-| **Left Stick** / **D-Pad Left/Right** | Rotate |
-| **D-Pad Up** / **A Button** / **Right Trigger** | Thrust |
-| **X Button** / **B Button** / **Left Trigger** | Fire |
-| **Start** | Pause |
-| **Back / Select** | Restart |
-
-#### SNES Controller Mapping
-
-| Button | Action |
-|--------|--------|
-| **D-Pad Left/Right** | Rotate |
-| **D-Pad Up** / **A** | Thrust |
-| **B** / **Y** | Fire |
-| **Start** | Pause |
-| **Select** | Restart |
 
 ## Gameplay
 
@@ -72,6 +56,11 @@ Controllers are automatically detected and supported via SDL2.
 - Bounce off the outer walls and central obstacle
 - Each wave brings more and faster enemies
 - You have 3 lives - game over when all are lost
+
+### Spawn Protection
+
+- **Invulnerability**: When you spawn or respawn, your ship is invulnerable for 2 seconds (indicated by blinking)
+- **Safe Spawning**: Enemies always spawn at a safe distance from the player, preventing unfair instant deaths
 
 ### Enemy Types
 
@@ -98,8 +87,7 @@ The project uses a full MVVM (Model-View-ViewModel) architecture with dependency
 - **Game Engine**: Core game loop, entity management, physics
 - **Services**: DI-registered interfaces for testability
   - `IGameEngine` - Game logic and state management
-  - `IInputHandler` - Keyboard and controller input
-  - `IControllerService` - Gamepad support via SDL2
+  - `IInputHandler` - Keyboard input
   - `ISoundService` - Synthesized audio generation
 
 ## License

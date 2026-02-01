@@ -12,7 +12,6 @@ public interface IInputHandler
     void HandleKeyDown(Key key);
     void HandleKeyUp(Key key);
     void Reset();
-    void UpdateController();
 
     event Action? OnPausePressed;
     event Action? OnRestartPressed;

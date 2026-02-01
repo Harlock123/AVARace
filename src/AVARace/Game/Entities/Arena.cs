@@ -67,17 +67,50 @@ public class Arena
         return velocity - 2 * dot * normal;
     }
 
-    public Vector2 GetRandomSpawnPosition(Random random)
+    public Vector2 GetRandomSpawnPosition(Random random, Vector2? avoidPosition = null, double minDistance = 150)
     {
         var minRadius = Math.Min(Width, Height) / 8 + 50;
         var maxRadius = Math.Min(Width, Height) / 2 - BorderThickness - 70;
-        var radius = minRadius + random.NextDouble() * (maxRadius - minRadius);
-        var angle = random.NextDouble() * Math.PI * 2;
 
-        return new Vector2(
-            CenterX + radius * Math.Cos(angle),
-            CenterY + radius * Math.Sin(angle)
-        );
+        const int maxAttempts = 20;
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            var radius = minRadius + random.NextDouble() * (maxRadius - minRadius);
+            var angle = random.NextDouble() * Math.PI * 2;
+
+            var position = new Vector2(
+                CenterX + radius * Math.Cos(angle),
+                CenterY + radius * Math.Sin(angle)
+            );
+
+            // If no position to avoid, or if far enough away, return this position
+            if (!avoidPosition.HasValue)
+            {
+                return position;
+            }
+
+            var distance = (position - avoidPosition.Value).Length;
+            if (distance >= minDistance)
+            {
+                return position;
+            }
+        }
+
+        // Fallback: spawn on opposite side of arena from player
+        if (avoidPosition.HasValue)
+        {
+            var playerAngle = Math.Atan2(avoidPosition.Value.Y - CenterY, avoidPosition.Value.X - CenterX);
+            var oppositeAngle = playerAngle + Math.PI;
+            var radius = minRadius + (maxRadius - minRadius) / 2;
+
+            return new Vector2(
+                CenterX + radius * Math.Cos(oppositeAngle),
+                CenterY + radius * Math.Sin(oppositeAngle)
+            );
+        }
+
+        // Final fallback
+        return new Vector2(CenterX, CenterY + maxRadius * 0.7);
     }
 
     public Vector2 GetPlayerStartPosition()

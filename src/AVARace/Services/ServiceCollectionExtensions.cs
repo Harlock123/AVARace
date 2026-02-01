@@ -10,7 +10,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddAVARaceServices(this IServiceCollection services)
     {
-        services.AddSingleton<IControllerService, ControllerService>();
         services.AddSingleton<IInputHandler, InputHandler>();
         services.AddSingleton<ISoundService, SoundService>();
         services.AddSingleton<IGameEngine, GameEngine>();
