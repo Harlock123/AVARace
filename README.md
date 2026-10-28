@@ -35,7 +35,7 @@ tar -xzf AVARace-linux-arm64.tar.gz      # or linux-x64, linux-arm, osx-arm64, o
 On Windows, unzip `AVARace-win-x64.zip` (or `-win-arm64`) and run `AVARace.exe`. On macOS, if
 Gatekeeper refuses to open it, run `xattr -d com.apple.quarantine AVARace` once.
 
-### Linux: sound and gamepads
+### Linux: sound
 
 - **Sound** needs `aplay`, from the `alsa-utils` package. Without it the game runs but is
   silent. Minimal installs (Arch, Omarchy, some Raspberry Pi images) don't include it:
